@@ -1,0 +1,24 @@
+{
+  "name": "hyper",
+  "version": "0.0.0",
+  "authors": [
+    "Adu Bhandaru <syphondu@gmail.com>"
+  ],
+  "description": "Easy canvas apps.",
+  "main": "src/Hyper.js",
+  "keywords": [
+    "app"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "underscore": "~1.7.0",
+    "threejs": "*"
+  }
+}
