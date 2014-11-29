@@ -15,11 +15,10 @@ coreRoutes = require "./routes/core"
 app = express()
 app.set("views", env.views)
 app.set("view engine", "jade")
-# app.set("view options", {layout: false})
+app.use express.static(env.public)
 app.use bodyParser.urlencoded(extended: false)
 app.use methodOverride()
 app.use morgan("dev")
-app.use express.static(env.public)
 app.use errorHandler(
   dumpExceptions: true
   showStack: true

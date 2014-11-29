@@ -15,7 +15,7 @@ env.port = if env.production then env.prodPort else env.devPort
 
 # paths
 env.appRoot = __dirname
-env.root = path.join env.appRoot, ".."
+env.root = path.join env.appRoot, "../.."
 env.views = path.join env.appRoot, "views"
 env.public = path.join env.root, "dist"
 
