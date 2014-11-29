@@ -12,3 +12,6 @@ class Scene
     scene.add(camera)
     camera.lookAt(scene.position)
     scene
+
+
+module.exports = Scene

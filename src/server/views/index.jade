@@ -4,4 +4,7 @@ block title
   title Denature
 
 block content
-  div #{message}
+  div(id="app")
+  script(type="text/javascript")
+    | var el = document.getElementById('app');
+    | var app = new App(el);

@@ -4,7 +4,7 @@ Dentature namespace contains no state.
 @author Adu Bhandaru
 ###
 
-App = require "core/app"
+App = require "./core/app"
 
 
 # Export the following under the Denature namespace

@@ -12,9 +12,12 @@ class Camera
   ###
   @create: (options) ->
     options = options or { }
-    viewAngle = options.viewAngle || 60
-    aspect = options.aspect || 1
-    near = options.near || 0.1
-    far = options.far || 10000
+    viewAngle = options.viewAngle or 60
+    aspect = options.aspect or 1
+    near = options.near or 0.1
+    far = options.far or 10000
     # create the camera
     new THREE.PerspectiveCamera(viewAngle, aspect, near, far)
+
+
+module.exports = Camera

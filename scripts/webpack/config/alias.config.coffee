@@ -18,4 +18,5 @@ module.exports =
   "templates" : path.join client, "templates"
 
   # Component nick-names
+  "denature$" : "denature/denature"
   "three$"    : "bower_components/threejs/build/three"

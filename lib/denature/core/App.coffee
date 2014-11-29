@@ -16,6 +16,7 @@ class App
   may pass in. These are the base traits with the least priority.
   ###
   @defaults:
+    animate: true
     bindResize: true
 
 
@@ -23,7 +24,7 @@ class App
   An options hash for an extending class to override (cannot be partially
   overriden). The client can omit defining theses to use the defualts.
   ###
-  options: App.defaults
+  options: util.extend { }, App.defaults
 
 
   ###
@@ -33,25 +34,29 @@ class App
   @param {Object} options An override hash for the default options.
   ###
   constructor: (@el, options) ->
-    @options = util.extend({ }, App.defaults, @options, options)
-    @width = el.offsetWidth
-    @height = el.offsetHeight
+    params = util.extend({ }, App.defaults, @options, options)
+    @width = @el.offsetWidth
+    @height = @el.offsetHeight
 
     # set up rendering environement
-    @camera = Camera.create aspect: width / height
-    @scene = Scene.create(this.camera)
-    @renderer = Renderer.create(width, height)
+    @camera = Camera.create aspect: @width / @height
+    @scene = Scene.create(@camera)
+    @renderer = Renderer.create(@width, @height)
     @canvas = @renderer.domElement
 
     # bind element and append canvas
     @el.appendChild @canvas
 
-    # automatically resize canvas
-    if @options.bindResize
-      self.addEventListener('resize', @resize.bind(@), false)
-
     # call client code
-    @init(el, options)
+    @init(@el, options)
+
+    # automatically resize canvas
+    if params.bindResize
+      self.addEventListener('resize', @resize.bind @, false)
+
+    # start up render loop
+    if params.animate
+      Renderer.loop(@render.bind @)
 
 
   ###
@@ -60,7 +65,7 @@ class App
   @param {HTMLElement} el A container for your application.
   @param {Object} options An override hash for the default options.
   ###
-  init: (el, options) -> @
+  init: (el, options) ->
 
 
   ###
@@ -89,3 +94,6 @@ class App
   @return {void}
   ###
   update: (dt) ->
+
+
+module.exports = App

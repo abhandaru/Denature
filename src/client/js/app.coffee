@@ -2,7 +2,12 @@
 # Entry point for application
 #
 require "css/app.less"
-THREE = require "three"
+Denature = require "denature"
 
 
-console.log "Hello world!"
+class App extends Denature.App
+  init: (el, options) ->
+    console.log "Hello world!"
+
+
+module.exports = self.App = App

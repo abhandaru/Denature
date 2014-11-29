@@ -12,23 +12,24 @@ class Renderer
   ###
   @create: (width, height) ->
     if flags.webGL
-      @renderer = new THREE.WebGLRenderer(
+      renderer = new THREE.WebGLRenderer(
         antialias: true              # to get smoother output
         preserveDrawingBuffer: true  # to allow screenshot
       )
-      @renderer.setClearColor(0xFFFFFF, 1)
+      renderer.setClearColorHex(0xFFFFFF, 1)
     else
-      @renderer = new THREE.CanvasRenderer()
+      renderer = new THREE.CanvasRenderer()
 
     renderer.setSize(width, height)
     renderer
+
 
   ###
   Loop an animation function.
   @param {Object} caller The context to run the animate function in.
   @param {Function} renderFn Animation function.
   ###
-  @loop: (caller, renderFn) ->
+  @loop: (callback) ->
     lastUpdate = Date.now()
     render = () ->
       self.requestAnimationFrame(render)
@@ -36,5 +37,8 @@ class Renderer
       now = Date.now()
       dt =  now - lastUpdate
       lastUpdate = now
-      renderFn.apply(caller, [dt])
+      callback(dt)
     render()
+
+
+module.exports = Renderer

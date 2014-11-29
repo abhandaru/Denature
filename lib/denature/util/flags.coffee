@@ -1,8 +1,8 @@
-webGL = ( ->
+webGL = (->
   try
     !!window.WebGLRenderingContext &&
     !!document.createElement('canvas').getContext('experimental-webgl')
-  catch (e)
+  catch e
     false
 )()
 
