@@ -13,10 +13,11 @@ class Renderer
   @create: (width, height) ->
     if flags.webGL
       renderer = new THREE.WebGLRenderer(
+        alpha: true
         antialias: true              # to get smoother output
         preserveDrawingBuffer: true  # to allow screenshot
       )
-      renderer.setClearColorHex(0xFFFFFF, 1)
+      renderer.setClearColor(0xFFFFFF)
     else
       renderer = new THREE.CanvasRenderer()
 

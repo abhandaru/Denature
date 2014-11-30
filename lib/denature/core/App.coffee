@@ -1,16 +1,11 @@
-###
-Base application class.
-@copyright 2013
-@author Adu Bhandaru
-###
-
-Camera = require "../models/camera"
-Renderer = require "../models/renderer"
-Scene = require "../models/scene"
+Camera = require "../factories/camera"
+Node = require "./node"
+Renderer = require "../factories/renderer"
+Scene = require "../factories/scene"
 util = require "../util/util"
 
 
-class App
+class App extends Node
   ###
   A static member hash of default options to merge into any options the client
   may pass in. These are the base traits with the least priority.
@@ -34,6 +29,8 @@ class App
   @param {Object} options An override hash for the default options.
   ###
   constructor: (@el, options) ->
+    super()
+
     params = util.extend({ }, App.defaults, @options, options)
     @width = @el.offsetWidth
     @height = @el.offsetHeight
@@ -44,10 +41,8 @@ class App
     @renderer = Renderer.create(@width, @height)
     @canvas = @renderer.domElement
 
-    # bind element and append canvas
+    # set up object tree for client
     @el.appendChild @canvas
-
-    # call client code
     @init(@el, options)
 
     # automatically resize canvas
@@ -84,16 +79,8 @@ class App
   @return {void}
   ###
   render: (dt) ->
-    @update(dt);
+    @trigger('timer', dt: dt)
     @renderer.render(@scene, @camera)
-
-
-  ###
-  Call any logic that would change your game state every timestep.
-  For example, animations may require you to update an object's position.
-  @return {void}
-  ###
-  update: (dt) ->
 
 
 module.exports = App
