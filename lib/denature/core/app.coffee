@@ -23,7 +23,7 @@ class App extends Node
 
 
   ###
-  Called before the object is constructed.
+  Called while the object is constructed.
   Logic sets up the camera, scene, renderer, and events.
   @param {HTMLElement} A container for your application.
   @param {Object} options An override hash for the default options.
@@ -31,7 +31,7 @@ class App extends Node
   constructor: (@el, options) ->
     super()
 
-    params = util.extend({ }, App.defaults, @options, options)
+    options = util.extend({ }, App.defaults, @options, options)
     @width = @el.offsetWidth
     @height = @el.offsetHeight
 
@@ -43,30 +43,31 @@ class App extends Node
 
     # set up object tree for client
     @el.appendChild @canvas
-    @init(@el, options)
+    @init @el, options
 
     # automatically resize canvas
-    if params.bindResize
-      self.addEventListener('resize', @resize.bind @, false)
+    if options.bindResize
+      self.addEventListener 'resize', (-> @trigger 'resize'), false
+      @subscribe 'resize', @__denature__resize
 
     # start up render loop
-    if params.animate
-      Renderer.loop(@render.bind @)
+    if options.animate
+      Renderer.loop(@__denature__timer.bind @)
 
 
   ###
   Custom init method.
   This should be overriden in the subclass.
   @param {HTMLElement} el A container for your application.
-  @param {Object} options An override hash for the default options.
+  @param {Object} options A hash of _fully_ resolved options.
   ###
-  init: (el, options) ->
+  initialize: (el, options) ->
 
 
   ###
   Called when the window is resized to fit the bounds.
   ###
-  resize: () ->
+  __denature__resize: () ->
     @width = @el.offsetWidth
     @height = @el.offsetHeight
     @renderer.setSize(@width, @height)
@@ -78,7 +79,7 @@ class App extends Node
   This gets called by the render loop.
   @return {void}
   ###
-  render: (dt) ->
+  __denature__timer: (dt) ->
     @trigger('timer', dt: dt)
     @renderer.render(@scene, @camera)
 
