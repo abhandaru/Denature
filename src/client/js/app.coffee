@@ -21,8 +21,8 @@ class Model extends Denature.Model
     @subscribe @root, 'timer', @timer
 
   timer: (payload) ->
-    @geo.rotation.x += 0.01;
-    @geo.rotation.y += 0.02;
+    @geo.rotation.x += 0.01
+    @geo.rotation.y += 0.02
 
 
 module.exports = self.App = App

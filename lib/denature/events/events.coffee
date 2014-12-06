@@ -5,7 +5,7 @@ class Events
   user when interacting with the canvas, and by the framework thusly.
   It is advised you do not use these names for events.
   ###
-  @events =
+  @names =
     LEFT_CLICK   : "click"
     RIGHT_CLICK  : "rightClick"
     MOUSE_MOVE   : "mouseMove"

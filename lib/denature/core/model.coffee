@@ -27,13 +27,13 @@ class Model extends Node
     super()
 
     # Resolve options
-    options = util.extend { }, Model.defaults, @options, options
+    @options = util.extend { }, Model.defaults, @options, options
 
     # Create skeleton view
     @__denature__object = new THREE.Object3D
 
     # Invoke client code
-    @initialize options
+    @initialize @options
 
 
   ###

@@ -33,7 +33,7 @@ class App extends Node
   constructor: (@el, options) ->
     super()
 
-    options = util.extend({ }, App.defaults, @options, options)
+    @options = util.extend({ }, App.defaults, @options, options)
     @width = @el.offsetWidth
     @height = @el.offsetHeight
 
@@ -45,15 +45,15 @@ class App extends Node
 
     # set up object tree for client
     @el.appendChild @canvas
-    @initialize @el, options
+    @initialize @el, @options
 
     # automatically resize canvas
-    if options.bindResize
+    if @options.bindResize
       self.addEventListener 'resize', (=> @trigger 'resize'), false
       @subscribe 'resize', @__denature__resize
 
     # start up render loop
-    if options.animate
+    if @options.animate
       Renderer.loop(@__denature__timer.bind @)
 
 
