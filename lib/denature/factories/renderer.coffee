@@ -20,7 +20,6 @@ class Renderer
       renderer.setClearColor(0xFFFFFF)
     else
       renderer = new THREE.CanvasRenderer()
-
     renderer.setSize(width, height)
     renderer
 

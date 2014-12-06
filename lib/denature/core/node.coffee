@@ -7,6 +7,7 @@ class Node
   constructor: () ->
     @root = @
     @parent = null
+    @__denature__children = [ ]
     @__denature__listeners = { }
 
 
@@ -61,6 +62,29 @@ class Node
 
 
   ###
+  Insert a node into this subtree. This determines object hierarchy in the
+  scene, and how events bubble up the tree.
+  @param {Node} node The node to insert.
+  ###
+  insert: (node) ->
+    node.root = @root
+    node.parent = @
+    @__denature__children.push node
+    @
+
+
+  ###
+  Set the root of this subtree to the one provided.
+  @param {App} root The root of the event tree.
+  ###
+  __denature__setRoot: (root) ->
+    @root = root
+    @trigger 'ready'
+    @__denature__children.forEach((node) ->
+      node.__denature__setRoot(root)
+    )
+
+  ###
   Invoke the handlers for the provided `name`, if any. If any handler
   returns false (strictly), then return false to prevent further propagation.
   All matched handlers will fire for this level of the subtree.
@@ -83,7 +107,7 @@ class Node
 
 
   ###
-  Remove all event listeners install by this node.
+  Remove all event listeners installed by this node.
   ###
   __denature__unsubscribe: (name) ->
     pred = (entry) -> entry.node isnt @

@@ -30,7 +30,7 @@ class Model extends Node
     options = util.extend { }, Model.defaults, @options, options
 
     # Create skeleton view
-    @__denature_object = new THREE.Object3D
+    @__denature__object = new THREE.Object3D
 
     # Invoke client code
     @initialize options
@@ -43,5 +43,23 @@ class Model extends Node
   ###
   initialize: (options) ->
 
+
+  ###
+  Add a THREE object to the model definition.
+  @param {THREE.Object3D} object The object to insert.
+  ###
+  include: (object) ->
+    @__denature__object.add(object)
+
+
+  ###
+  Insert a model into this subtree. This determines object hierarchy in the
+  scene, and how events bubble up the tree.
+  @param {Model} model The model to insert.
+  ###
+  insert: (model) ->
+    super(model)
+    @__denature__object.add(model.__denature__object)
+    @
 
 module.exports = Model

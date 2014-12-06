@@ -1,3 +1,5 @@
+THREE = require "three"
+
 Camera = require "../factories/camera"
 Node = require "./node"
 Renderer = require "../factories/renderer"
@@ -43,11 +45,11 @@ class App extends Node
 
     # set up object tree for client
     @el.appendChild @canvas
-    @init @el, options
+    @initialize @el, options
 
     # automatically resize canvas
     if options.bindResize
-      self.addEventListener 'resize', (-> @trigger 'resize'), false
+      self.addEventListener 'resize', (=> @trigger 'resize'), false
       @subscribe 'resize', @__denature__resize
 
     # start up render loop
@@ -62,6 +64,18 @@ class App extends Node
   @param {Object} options A hash of _fully_ resolved options.
   ###
   initialize: (el, options) ->
+
+
+  ###
+  Insert a model into this subtree. This determines object hierarchy in the
+  scene, and how events bubble up the tree.
+  @param {Model} model The model to insert.
+  ###
+  insert: (model) ->
+    super(model)
+    @scene.add(model.__denature__object)
+    model.__denature__setRoot @
+    @
 
 
   ###
