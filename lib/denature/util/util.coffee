@@ -1,6 +1,6 @@
 ###
-We implement extend ourselves to remove a dependency on underscore or lodash.
-`extend` follows the same API as those described by UnderscoreJS
+We implement these functions ourselves to remove a dependency on underscore or
+lodash. We follow the same API as those described by UnderscoreJS
 ###
 extend = (result, overrides...) ->
   for hash in overrides

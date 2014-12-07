@@ -15,10 +15,14 @@ class Model extends Denature.Model
       new THREE.IcosahedronGeometry(200, 1),
       new THREE.MeshNormalMaterial())
     @include @geo
-    @subscribe 'ready', @ready
+    @subscribe "ready", @attachEvents
 
-  ready: ->
-    @subscribe @root, 'timer', @timer
+  attachEvents: ->
+    @subscribe @root, "timer", @timer
+    @subscribe "click", @pause
+
+  pause: ->
+    @unsubscribe "timer"
 
   timer: (payload) ->
     @geo.rotation.x += 0.01

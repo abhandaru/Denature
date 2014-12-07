@@ -1,6 +1,7 @@
 THREE = require "three"
 
 Camera = require "../factories/camera"
+Monitor = require "../events/monitor"
 Node = require "./node"
 Renderer = require "../factories/renderer"
 Scene = require "../factories/scene"
@@ -15,6 +16,7 @@ class App extends Node
   @defaults:
     animate: true
     bindResize: true
+    interactive: true
 
 
   ###
@@ -42,10 +44,11 @@ class App extends Node
     @scene = Scene.create(@camera)
     @renderer = Renderer.create(@width, @height)
     @canvas = @renderer.domElement
-
-    # set up object tree for client
     @el.appendChild @canvas
-    @initialize @el, @options
+
+    # hook up scene interaction
+    if @options.interactive
+      @__denature__monitor = new Monitor(@, @el)
 
     # automatically resize canvas
     if @options.bindResize
@@ -55,6 +58,9 @@ class App extends Node
     # start up render loop
     if @options.animate
       Renderer.loop(@__denature__timer.bind @)
+
+    # invoke client code
+    @initialize @el, @options
 
 
   ###
@@ -91,7 +97,6 @@ class App extends Node
 
   ###
   This gets called by the render loop.
-  @return {void}
   ###
   __denature__timer: (dt) ->
     @trigger('timer', dt: dt)

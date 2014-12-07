@@ -30,6 +30,7 @@ class Model extends Node
     @options = util.extend { }, Model.defaults, @options, options
 
     # Create skeleton view
+    @__denature__includes = [ ]
     @__denature__object = new THREE.Object3D
 
     # Invoke client code
@@ -49,7 +50,9 @@ class Model extends Node
   @param {THREE.Object3D} object The object to insert.
   ###
   include: (object) ->
+    @__denature__includes.push object
     @__denature__object.add(object)
+    @__denature__updateTracking()
 
 
   ###
@@ -60,6 +63,29 @@ class Model extends Node
   insert: (model) ->
     super(model)
     @__denature__object.add(model.__denature__object)
-    @
+    @__denature__updateTracking()
+
+
+  ###
+  Set the root of this subtree to the one provided.
+  @param {App} root The root of the event tree.
+  ###
+  __denature__setRoot: (root) ->
+    @root = root
+    @__denature__monitor = root.__denature__monitor
+    if @options.interactive
+      @__denature__monitor.track @
+
+    # Indicate that the model is ready for bindings
+    @trigger 'ready'
+    for node in @__denature__children
+      node.__denature__setRoot(root)
+
+
+  __denature__updateTracking: () ->
+    return @ unless @__denature__monitor? and @options.interactive
+    @__denature__monitor.update @
+    console.log @__denature__monitor
+
 
 module.exports = Model

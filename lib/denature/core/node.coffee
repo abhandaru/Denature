@@ -3,10 +3,21 @@ The Node class represents any entity that can trigger or listen for events
 inside the canvas app.
 ###
 class Node
+  ###
+  Give each model instance an id for tracking purposes. This static counter
+  determines the next id that will be assigned.
+  ###
+  @nextId: 0
 
+
+  ###
+  The Node constructor takes no arguments.
+  ###
   constructor: () ->
+    @id = Node.nextId++
     @root = @
     @parent = null
+    @__denature__monitor = null
     @__denature__children = [ ]
     @__denature__listeners = { }
 
@@ -18,8 +29,8 @@ class Node
   @param {Object} payload Any serializable object.
   ###
   trigger: (name, payload) ->
-    if @__denature__trigger(name, payload)
-      @parent?.trigger(name, payload)
+    ret = @__denature__trigger(name, payload)
+    @parent?.trigger(name, payload) if ret
     @
 
 
@@ -69,20 +80,10 @@ class Node
   insert: (node) ->
     node.root = @root
     node.parent = @
+    node.__denature__monitor = @root.__denature__monitor
     @__denature__children.push node
     @
 
-
-  ###
-  Set the root of this subtree to the one provided.
-  @param {App} root The root of the event tree.
-  ###
-  __denature__setRoot: (root) ->
-    @root = root
-    @trigger 'ready'
-    @__denature__children.forEach((node) ->
-      node.__denature__setRoot(root)
-    )
 
   ###
   Invoke the handlers for the provided `name`, if any. If any handler
@@ -91,9 +92,11 @@ class Node
   @return {Boolean} false if we should stop propagation.
   ###
   __denature__trigger: (name, payload) ->
-    listeners = @__denature__listeners
-    listeners[name]?.map((entry) -> entry.handler.apply entry.node, [payload])
-      .every((propagate) -> propagate is not false)
+    listeners = @__denature__listeners[name]
+    return true if not listeners?
+    listeners.map(
+      (entry) -> entry.handler.apply entry.node, [payload]
+    ).every((propagate) -> propagate is not false)
 
 
   ###
@@ -115,7 +118,7 @@ class Node
     while node?
       listeners = node.__denature__listeners
       if name?
-        listeners[name] = entries.filter pred, @
+        listeners[name] = listeners[name]?.filter pred, @
       else
         for name, entries of listeners
           listeners[name] = entries.filter pred, @
