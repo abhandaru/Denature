@@ -74,6 +74,15 @@ class Monitor
 
 
   ###
+  Stop tracking the given model.
+  @param {Model} model The model to remove event tracking for.
+  ###
+  forget: (model) ->
+    delete @models[model.id]
+    @computeObjects()
+
+
+  ###
   Given the current models registered, compute the new list of objects to
   track for event monitoring.
   ###
@@ -97,6 +106,11 @@ class Monitor
     # el.addEventListener('contextmenu', @decorateHandler(@contextmenu), false)
 
 
+  ###
+  Wrap each raw event handler with the following code. This reuses the code
+  for scene intersection and model selection/deselection.
+  @param {Function} handler The event handler to wrap.
+  ###
   decorateHandler: (handler) -> (event) =>
     event.preventDefault()
     e = new Event(event)
@@ -125,6 +139,13 @@ class Monitor
     ret
 
 
+  ###
+  Find objects in the scene that intersect with the ray cast from coordinates
+  given. This uses the cursor (x,y), the camera position and direction, and a
+  a raycaster.
+  @param {Number} x The x position of the cursor
+  @param {Number} y The y position of the cursor
+  ###
   getTargets: (x, y) ->
     camera = @root.camera
     vector = new THREE.Vector3(
@@ -137,9 +158,16 @@ class Monitor
       camera.position,
       vector.sub(camera.position).normalize()
     )
-    raycaster.intersectObjects(this.objects);
+    raycaster.intersectObjects(@objects, true);
 
 
+  ###
+  Update the event tracking state with regards to target selection or
+  deselection. Generates new events if needed.
+  @param {self.Event} event The native event.
+  @param {Model} current The current model which is being targeted.
+  @param {THREE.Vector2} coords The coordinates of the original cursor event.
+  ###
   checkFocus: (event, current, coords) ->
     focus = @lastOver
     ret = false
@@ -153,6 +181,10 @@ class Monitor
     ret
 
 
+  ###
+  Intercepts click events and updates the event tracking state.
+  @param {Event} event The click event.
+  ###
   click: (event) ->
     @lastClick = event.target
     event.target.trigger(Monitor.events.LEFT_CLICK, event)

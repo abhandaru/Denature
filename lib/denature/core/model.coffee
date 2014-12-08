@@ -64,6 +64,18 @@ class Model extends Node
     super(model)
     @__denature__object.add(model.__denature__object)
     @__denature__updateTracking()
+    @trigger "ready" if model.root?
+
+
+  ###
+  Remove any event listeners installed by the given model, objects inserted
+  into the scene and event monitor, and then cascade this action down to the
+  children.
+  ###
+  remove: (model) ->
+    super(model)
+    @__denature__object.remove model.__denature__object
+    @__denature__forget model
 
 
   ###
@@ -77,15 +89,28 @@ class Model extends Node
       @__denature__monitor.track @
 
     # Indicate that the model is ready for bindings
-    @trigger 'ready'
-    for node in @__denature__children
-      node.__denature__setRoot(root)
+    @trigger "ready"
+    for child in @__denature__children
+      child.__denature__setRoot(root)
 
 
+  ###
+  Tell the event monitor that this module needs to update the tracking for
+  its objects in the scene.
+  ###
   __denature__updateTracking: () ->
     return @ unless @__denature__monitor? and @options.interactive
     @__denature__monitor.update @
     console.log @__denature__monitor
+
+
+  ###
+  Remove event bindings and event monitor tracking for model and all children.
+  ###
+  __denature__forget: (model) ->
+    model.__denature__monitor?.forget @
+    for child in model.__denature__children
+      @__denature__forget(child)
 
 
 module.exports = Model

@@ -15,7 +15,7 @@ class Node
   ###
   constructor: () ->
     @id = Node.nextId++
-    @root = @
+    @root = null
     @parent = null
     @__denature__monitor = null
     @__denature__children = [ ]
@@ -29,8 +29,8 @@ class Node
   @param {Object} payload Any serializable object.
   ###
   trigger: (name, payload) ->
-    ret = @__denature__trigger(name, payload)
-    @parent?.trigger(name, payload) if ret
+    if @__denature__trigger(name, payload)
+      @parent?.trigger(name, payload)
     @
 
 
@@ -86,6 +86,19 @@ class Node
 
 
   ###
+  When a Node is removed, it removes all event handlers installed by itself
+  from the event tracking system.
+  @param {Node} node The node to remove from children.
+  ###
+  remove: (node) ->
+    @__denature__remove node
+    index = @__denature__children.indexOf node
+    if index > -1
+      @__denature__children.splice(index, 1)
+    @
+
+
+  ###
   Invoke the handlers for the provided `name`, if any. If any handler
   returns false (strictly), then return false to prevent further propagation.
   All matched handlers will fire for this level of the subtree.
@@ -96,7 +109,9 @@ class Node
     return true if not listeners?
     listeners.map(
       (entry) -> entry.handler.apply entry.node, [payload]
-    ).every((propagate) -> propagate is not false)
+    ).every(
+      (propagate) -> propagate isnt false
+    )
 
 
   ###
@@ -117,12 +132,24 @@ class Node
     node = @
     while node?
       listeners = node.__denature__listeners
+      remove = (name) =>
+        list = listeners[name]?.filter pred, @
+        if list?.length then listeners[name] = list
+        else delete listeners[name]
       if name?
-        listeners[name] = listeners[name]?.filter pred, @
+        remove(name)
       else
-        for name, entries of listeners
-          listeners[name] = entries.filter pred, @
+        remove(name) for name of listeners
       node = node.parent
+
+
+  ###
+  Remove event bindings for node and all children.
+  ###
+  __denature__remove: (node) ->
+    node.__denature__unsubscribe()
+    for child in node.__denature__children
+      @__denature__remove(child)
 
 
 module.exports = Node

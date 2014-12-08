@@ -45,6 +45,7 @@ class App extends Node
     @renderer = Renderer.create(@width, @height)
     @canvas = @renderer.domElement
     @el.appendChild @canvas
+    @root = @
 
     # hook up scene interaction
     if @options.interactive
@@ -84,6 +85,12 @@ class App extends Node
     @
 
 
+  remove: (model) ->
+    super(model)
+    @scene.remove model.__denature__object
+    @__denature__forget model
+
+
   ###
   Called when the window is resized to fit the bounds.
   ###
@@ -101,6 +108,15 @@ class App extends Node
   __denature__timer: (dt) ->
     @trigger('timer', dt: dt)
     @renderer.render(@scene, @camera)
+
+
+  ###
+  Remove event bindings and event monitor tracking for model and all children.
+  ###
+  __denature__forget: (model) ->
+    model.__denature__monitor?.forget @
+    for child in model.__denature__children
+      @__denature__forget(child)
 
 
 module.exports = App
