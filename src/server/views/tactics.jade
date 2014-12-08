@@ -1,0 +1,14 @@
+extends layout
+
+block title
+  title Tactics
+
+block resources
+  link(href="/css/tactics.bundle.css", type="text/css", rel="stylesheet", media="all")
+  script(src="/js/tactics.bundle.js", type="text/javascript")
+
+block content
+  div(id="app")
+  script(type="text/javascript")
+    | var el = document.getElementById('app');
+    | var tactics = new Tactics(el);

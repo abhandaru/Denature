@@ -3,7 +3,7 @@ Denature = require "denature"
 THREE = require "three"
 
 
-class App extends Denature.App
+class Tactics extends Denature.App
   initialize: (el, options) ->
     @camera.position.set(500, 500, 500)
     @camera.lookAt(new THREE.Vector3(0, 0, 0))
@@ -31,4 +31,4 @@ class Model extends Denature.Model
     @geo.rotation.y += 0.02
 
 
-module.exports = self.App = App
+module.exports = self.Tactics = Tactics

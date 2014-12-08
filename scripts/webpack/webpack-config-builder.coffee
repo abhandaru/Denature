@@ -21,7 +21,6 @@ UglifyPlugin = webpack.optimize.UglifyJsPlugin
 ###
 Common config
 ###
-# Root directory of the project and resources
 root = path.join __dirname, "../.."
 resources = "src/client"
 context = path.join root, resources
@@ -97,6 +96,7 @@ class WebpackConfigBuilder
   # Top level modules to build bundles for.
   entryConfig: (params) ->
     app: path.join context, "js/app.coffee"
+    tactics: path.join context, "js/tactics/tactics.coffee"
 
 
   ###

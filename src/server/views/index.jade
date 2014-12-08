@@ -3,6 +3,10 @@ extends layout
 block title
   title Denature
 
+block resources
+  link(href="/css/app.bundle.css", type="text/css", rel="stylesheet", media="all")
+  script(src="/js/app.bundle.js", type="text/javascript")
+
 block content
   div(id="app")
   script(type="text/javascript")
