@@ -1,5 +1,7 @@
-Node = require "../core/node"
 THREE = require "three"
+
+Monitor = require "../events/monitor"
+Node = require "./node"
 util = require "../util/util"
 
 
@@ -64,13 +66,14 @@ class Model extends Node
     super(model)
     @__denature__object.add(model.__denature__object)
     @__denature__updateTracking()
-    @trigger "ready" if model.root?
+    @trigger Monitor.events.READY if model.root?
 
 
   ###
   Remove any event listeners installed by the given model, objects inserted
   into the scene and event monitor, and then cascade this action down to the
   children.
+  @param {Model} model The child model to remove.
   ###
   remove: (model) ->
     super(model)
@@ -89,7 +92,7 @@ class Model extends Node
       @__denature__monitor.track @
 
     # Indicate that the model is ready for bindings
-    @trigger "ready"
+    @trigger Monitor.events.READY
     for child in @__denature__children
       child.__denature__setRoot(root)
 

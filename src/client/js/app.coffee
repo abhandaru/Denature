@@ -19,10 +19,12 @@ class Model extends Denature.Model
 
   attachEvents: ->
     @subscribe @root, "timer", @timer
-    @subscribe "click", @pause
+    @subscribe "mouseover", @pause
+    @subscribe "mouseout", @resume
 
-  pause: ->
-    @unsubscribe "timer"
+  pause: -> @unsubscribe "timer"
+
+  resume: -> @subscribe @root, "timer", @timer
 
   timer: (payload) ->
     @geo.rotation.x += 0.01

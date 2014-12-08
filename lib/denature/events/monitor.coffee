@@ -5,7 +5,6 @@ util = require "../util/util"
 
 
 class Monitor
-
   ###
   List of all built in event names. These events can be triggered by the
   user when interacting with the canvas, and by the framework thusly.
@@ -13,15 +12,16 @@ class Monitor
   ###
   @events =
     LEFT_CLICK   : "click"
-    RIGHT_CLICK  : "rightClick"
-    MOUSE_MOVE   : "mouseMove"
-    MOUSE_DOWN   : "mouseDown"
-    MOUSE_UP     : "mouseUp"
-    MOUSE_OVER   : "mouseOver"
-    MOUSE_OUT    : "mouseOut"
-    MOUSE_DRAG   : "mouseDrag"
-    MOUSE_DROP   : "mouseDrop"
+    MOUSE_MOVE   : "mousemove"
+    MOUSE_DOWN   : "mousedown"
+    MOUSE_UP     : "mouseup"
+    MOUSE_OVER   : "mouseover"
+    MOUSE_OUT    : "mouseout"
+    MOUSE_DRAG   : "mousedrag"
+    MOUSE_DROP   : "mousedrop"
     MOUSE_SCROLL : "scroll"
+    READY        : "ready"
+    RIGHT_CLICK  : "rightclick"
 
 
   ###
@@ -99,11 +99,11 @@ class Monitor
   ###
   attachListeners: (el) ->
     el.addEventListener('click', @decorateHandler(@click), false)
-    # el.addEventListener('mousedown', @decorateHandler(@mousedown), false)
-    # el.addEventListener('mouseup', @decorateHandler(@mouseup), false)
-    # el.addEventListener('mousemove', @decorateHandler(@mousemove), false)
-    # el.addEventListener('mousewheel', @decorateHandler(@mousewheel), false)
-    # el.addEventListener('contextmenu', @decorateHandler(@contextmenu), false)
+    el.addEventListener('mousedown', @decorateHandler(@mouseDown), false)
+    el.addEventListener('mouseup', @decorateHandler(@mouseUp), false)
+    el.addEventListener('mousemove', @decorateHandler(@mouseMove), false)
+    el.addEventListener('mousewheel', @decorateHandler(@mouseWheel), false)
+    el.addEventListener('contextmenu', @decorateHandler(@contextMenu), false)
 
 
   ###
@@ -182,12 +182,54 @@ class Monitor
 
 
   ###
-  Intercepts click events and updates the event tracking state.
-  @param {Event} event The click event.
+  The following functions intercept native DOM events and map them to the
+  correct events in the 3D scene. Each takes in a derived Denature.Event.
   ###
   click: (event) ->
     @lastClick = event.target
     event.target.trigger(Monitor.events.LEFT_CLICK, event)
+
+
+  mouseDown: (event) ->
+    @lastClick = event.target
+    @isMouseDown = true
+    event.target.trigger(Monitor.events.MOUSE_DOWN, event)
+
+
+  mouseUp: (event) ->
+    @isMouseDown = false
+    ret = event.target.trigger(Monitor.events.MOUSE_UP, event)
+    # Run drop handler.
+    if @lastDrag?
+      @lastDrag.trigger(Monitor.events.MOUSE_DROP, event)
+      @lastDrag = null
+    # Clean up.
+    ret
+
+
+  mouseMove: (event) ->
+    target = event.target
+    ret = target.trigger(Monitor.events.MOUSE_MOVE, event)
+    # Check for change of focus (hover).
+    if @lastOver isnt target
+      @lastOver?.trigger(Monitor.events.MOUSE_OUT, event)
+      target.trigger(Monitor.events.MOUSE_OVER, event)
+    # Check for drags.
+    if @isMouseDown and @lastClick is target
+      @lastDrag = target
+      target.trigger(Monitor.events.MOUSE_DRAG, event)
+    else if @isMouseDown and @lastDrag?
+      @lastDrag.trigger(Monitor.events.MOUSE_DRAG, event)
+    # Clean up by returning original handler result
+    ret
+
+
+  mouseWheel: (event) ->
+    event.target.trigger(Monitor.events.MOUSE_SCROLL, event)
+
+
+  contextMenu: (event) ->
+    event.target.trigger(Monitor.events.RIGHT_CLICK, event)
 
 
 module.exports = Monitor

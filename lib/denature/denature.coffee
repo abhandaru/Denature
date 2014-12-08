@@ -5,14 +5,20 @@ Dentature namespace contains no state.
 ###
 
 App = require "./core/app"
+Event = require "./events/event"
+flags = require "./util/flags"
 Model = require "./core/model"
 
 
-# Export the following under the Denature namespace
+###
+Export the following under the Denature namespace
+###
 module.exports =
+  # Expose metadata.
+  version: 0.1
+  webGL: flags.webGL
 
-  ###
-  Expose the base classes.
-  ###
+  # Expose base classes.
   App: App
+  Event: Event
   Model: Model

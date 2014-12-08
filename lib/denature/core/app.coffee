@@ -85,6 +85,12 @@ class App extends Node
     @
 
 
+  ###
+  Remove any event listeners installed by the given model, objects inserted
+  into the scene and event monitor, and then cascade this action down to the
+  children.
+  @param {Model} model The child model to remove.
+  ###
   remove: (model) ->
     super(model)
     @scene.remove model.__denature__object

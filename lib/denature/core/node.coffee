@@ -132,10 +132,14 @@ class Node
     node = @
     while node?
       listeners = node.__denature__listeners
+      # Filter out handlers by name routine.
       remove = (name) =>
         list = listeners[name]?.filter pred, @
-        if list?.length then listeners[name] = list
-        else delete listeners[name]
+        if list?.length
+          listeners[name] = list
+        else
+          delete listeners[name]
+      # If name provided, only filter for this event name.
       if name?
         remove(name)
       else
