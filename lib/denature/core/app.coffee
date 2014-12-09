@@ -98,6 +98,20 @@ class App extends Node
 
 
   ###
+  Safely swap the renderer or camera. These can later be referenced by the
+  usual camera and renderer instance variables.
+  @param {THREE.Camera|THREE.Renderer} item The thing to replace.
+  ###
+  use: (item) ->
+    if item instanceof THREE.Camera
+      @scene.remove @camera
+      @camera = item
+    else if item instanceof THREE.Renderer
+      @renderer = item
+    @
+
+
+  ###
   Called when the window is resized to fit the bounds.
   ###
   __denature__resize: () ->
@@ -112,7 +126,7 @@ class App extends Node
   This gets called by the render loop.
   ###
   __denature__timer: (dt) ->
-    @trigger('timer', dt: dt)
+    @trigger(Monitor.events.TIMER, dt: dt)
     @renderer.render(@scene, @camera)
 
 

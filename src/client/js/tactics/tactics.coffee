@@ -14,7 +14,7 @@ class Tactics extends Denature.App
 class Model extends Denature.Model
   initialize: (options) ->
     @geo = new THREE.Mesh(
-      new HexagonGeometry(200, 1),
+      new THREE.CylinderGeometry(100, 100, 6, 1),
       new THREE.MeshNormalMaterial())
     @include @geo
     @subscribe "ready", @attachEvents

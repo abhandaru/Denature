@@ -22,6 +22,7 @@ class Monitor
     MOUSE_SCROLL : "scroll"
     READY        : "ready"
     RIGHT_CLICK  : "rightclick"
+    TIMER        : "timer"
 
 
   ###
