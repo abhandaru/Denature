@@ -2,28 +2,33 @@ require "css/base.less"
 Denature = require "denature"
 THREE = require "three"
 
-HexagonGeometry = require "./geometries/hexagon-geometry"
+Board = require "./board"
+Lights = require "./lights"
 
 
 class Tactics extends Denature.App
+  @origin = new THREE.Vector3(0, 0, 0)
+
   initialize: (el, options) ->
-    @camera.position.set(500, 500, 500)
-    @camera.lookAt(new THREE.Vector3(0, 0, 0))
-    @insert new Model
+    @camera.position.set(800, 500, 800)
+    @camera.lookAt(Tactics.origin)
 
-class Model extends Denature.Model
-  initialize: (options) ->
-    @geo = new THREE.Mesh(
-      new THREE.CylinderGeometry(100, 100, 6, 1),
-      new THREE.MeshNormalMaterial())
-    @include @geo
-    @subscribe "ready", @attachEvents
+    @board = new Board
+    @light = new THREE.PointLight(0xFFFFFF)
+    @light.position.set(0, 500, 0)
 
-  attachEvents: ->
-    @subscribe @root, "timer", @timer
+    @insert @board
+    @scene.add @light
+    @subscribe "scroll", @rotate
 
-  timer: (payload) ->
-    @geo.rotation.y += 0.02
+  rotate: (e) ->
+    dtheta = e.scrollDelta().x * 0.004
+    pos = @camera.position
+    radius = Math.sqrt(pos.x * pos.x + pos.z * pos.z)
+    theta = Math.atan2(pos.z, pos.x) + dtheta
+    pos.setX(Math.cos(theta) * radius)
+    pos.setZ(Math.sin(theta) * radius)
+    @camera.lookAt(Tactics.origin)
 
 
 module.exports = self.Tactics = Tactics

@@ -80,7 +80,7 @@ class Node
   insert: (node) ->
     node.root = @root
     node.parent = @
-    node.__denature__monitor = @root.__denature__monitor
+    node.__denature__monitor = @root.__denature__monitor if @root
     @__denature__children.push node
     @
 

@@ -1,3 +1,6 @@
+THREE = require "three"
+
+
 class Event
   ###
   Create a new event.
